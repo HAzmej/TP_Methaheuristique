@@ -29,7 +29,7 @@ public class GreedySolver implements Solver {
         int nb_tache_per_job = instance.numTasks;
         int nb_job_instan = instance.numJobs; 
         ResourceOrder manualRO = new ResourceOrder(instance);
-        ArrayList <Task> tabtask = new ArrayList();
+        ArrayList <Task> tabtask = new ArrayList<Task>();
 
         //Si on a des Task à faire : on crée tous les Jobs
         if (nb_tache_per_job>0) {
@@ -38,11 +38,13 @@ public class GreedySolver implements Solver {
             }
         }
 
+        //Tableau pour les machines restantes disponibles
         ArrayList <Integer> machine_dispo = new ArrayList<>();
         for ( int i=0 ;i <instance.numMachines;i++) {
             machine_dispo.add(i,0);
         } 
 
+        //Tableau pour les Jobs restants disponibles
         ArrayList <Integer> job_dispo = new ArrayList<>();
         for ( int i=0 ;i <instance.numJobs;i++) {
             job_dispo.add(i,0);
@@ -50,13 +52,39 @@ public class GreedySolver implements Solver {
 
         //Traitement des Cas de Priorité
         while (!tabtask.isEmpty()) {
+            int min;
+            int max;
+            int temps;
             switch(priority) {
                 case SPT: 
                     System.out.println("Je suis SPT");
+                    Task shorttask = tabtask.get(0);
+                    min = instance.duration(shorttask);
+                    for (int i =0 ; i< tabtask.size();i++) {
+                        temps = instance.duration(tabtask.get(i));
+                        if (temps < min ) {
+                            min = temps ;
+                            shorttask = tabtask.get(i);
+                        }
+                    }
 
+                    tabtask.remove(shorttask);
+                    manualRO.addTaskToMachine(instance.machine(shorttask), shorttask);
                     break;
                 case LRPT : 
                     System.out.println("Je suis LRPT");
+                    Task longtask = tabtask.get(0);
+                    max = instance.duration(longtask);
+                    for (int i =0 ; i< tabtask.size();i++) {
+                        temps = instance.duration(tabtask.get(i));
+                        if (temps > max ) {
+                            max = temps ;
+                            longtask = tabtask.get(i);
+                        }
+                    }
+
+                    tabtask.remove(longtask);
+                    manualRO.addTaskToMachine(instance.machine(longtask), longtask);
                     break;
             }
         }
