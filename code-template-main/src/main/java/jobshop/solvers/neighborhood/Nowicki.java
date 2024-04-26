@@ -1,11 +1,13 @@
 package jobshop.solvers.neighborhood;
 
-import jobshop.encodings.ResourceOrder;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import jobshop.encodings.ResourceOrder;
+import jobshop.encodings.Task;
 
 /** Implementation of the Nowicki and Smutnicki neighborhood.
  *
@@ -42,6 +44,7 @@ public class Nowicki extends Neighborhood {
             this.firstTask = firstTask;
             this.lastTask = lastTask;
         }
+
     }
 
     /**
@@ -87,7 +90,9 @@ public class Nowicki extends Neighborhood {
          *  The original ResourceOrder MUST NOT be modified by this operation.
          */
         public ResourceOrder generateFrom(ResourceOrder original) {
-            throw new UnsupportedOperationException();
+            ResourceOrder contrefacon = original;
+            List<ResourceOrder> listeswapee =generateNeighbors(contrefacon);
+            return contrefacon;
         }
 
         @Override
@@ -126,12 +131,44 @@ public class Nowicki extends Neighborhood {
 
     /** Returns a list of all the blocks of the critical path. */
     List<Block> blocksOfCriticalPath(ResourceOrder order) {
-        throw new UnsupportedOperationException();
+        ArrayList<Block> ListBlock = new ArrayList<Block>();
+        List<Task> CriticalPath = order.toSchedule().get().criticalPath();
+        //recup num de machine
+        //commencez par 1ere task avec sa machine
+        //iterer juqu'a trouver une autre task avec la meme machine
+        //stocker task1 , task2 et la meme machine
+
+        int machine = -1 ;
+
+        for(int i = 0 ; i < CriticalPath.size() ; i ++){
+            int MachineAvant = order.instance.machine(CriticalPath.get(i));
+            int firsttask = -1;
+            int lasttask = -1;
+           
+            for(int j = i+1 ; j < CriticalPath.size() ; j++){
+                int machineQuiTask = order.instance.machine(CriticalPath.get(j));
+                if (machineQuiTask == MachineAvant && j == i+1){
+                    machine = machineQuiTask;
+                    firsttask = order.getIndexOfTask(MachineAvant, CriticalPath.get(i));
+                    lasttask = order.getIndexOfTask(machineQuiTask, CriticalPath.get(j));
+                }
+            }
+            if (firsttask != lasttask){
+                Block block = new Block(machine, firsttask, lasttask);
+                ListBlock.add(block);
+            }
+        }
+        return ListBlock;
     }
 
     /** For a given block, return the possible swaps for the Nowicki and Smutnicki neighborhood */
     List<Swap> neighbors(Block block) {
-        throw new UnsupportedOperationException();
+        ArrayList<Swap> listSwap = new ArrayList<Swap>();
+        for(int i = block.firstTask ; i < block.lastTask ; i++){
+            Swap swap = new Swap(block.machine, i, i+1);
+            listSwap.add(swap);
+        }
+        return listSwap;
     }
 
 }

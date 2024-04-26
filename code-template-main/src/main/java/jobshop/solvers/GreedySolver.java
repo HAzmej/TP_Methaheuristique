@@ -86,8 +86,14 @@ public class GreedySolver implements Solver {
                     tabtask.remove(longtask);
                     manualRO.addTaskToMachine(instance.machine(longtask), longtask);
                     break;
+                case EST_SPT:
+
+                break;
+                case EST_LRPT:
+                
+                break;
             }
         }
-        throw new UnsupportedOperationException();  
+        return  manualRO.toSchedule();
     }
 }

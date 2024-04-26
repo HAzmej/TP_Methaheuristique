@@ -1,11 +1,11 @@
 package jobshop.encodings;
 
-import jobshop.Instance;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.IntStream;
+
+import jobshop.Instance;
 
 /** Encoding of a solution by the ordering of tasks on each machine. */
 public final class ResourceOrder extends Encoding {
@@ -189,5 +189,15 @@ public final class ResourceOrder extends Encoding {
         int result = Arrays.hashCode(tasksByMachine);
         result = 31 * result + Arrays.hashCode(nextFreeSlot);
         return result;
+    }
+
+    public int getIndexOfTask(int machine, Task task){
+        int j = -1 ;
+        for (int i=0;i<this.instance.numJobs;i++){
+            if (tasksByMachine.equals(getTaskOfMachine(machine, i))){
+                j=i;
+            }
+        }
+        return j;
     }
 }
