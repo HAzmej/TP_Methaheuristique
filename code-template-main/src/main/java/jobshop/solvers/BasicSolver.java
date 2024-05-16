@@ -1,11 +1,11 @@
 package jobshop.solvers;
 
+import java.util.Optional;
+
 import jobshop.Instance;
 import jobshop.encodings.ResourceOrder;
 import jobshop.encodings.Schedule;
 import jobshop.encodings.Task;
-
-import java.util.Optional;
 
 /**
  * A very naïve solver that first schedules all first tasks, then all second tasks, ...

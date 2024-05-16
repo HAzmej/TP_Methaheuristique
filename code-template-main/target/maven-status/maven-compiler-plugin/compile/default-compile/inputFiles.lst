@@ -10,4 +10,5 @@
 /home/mejri/Bureau/Metha/TP_Methaheuristique/code-template-main/src/main/java/jobshop/solvers/DescentSolver.java
 /home/mejri/Bureau/Metha/TP_Methaheuristique/code-template-main/src/main/java/jobshop/Instance.java
 /home/mejri/Bureau/Metha/TP_Methaheuristique/code-template-main/src/main/java/jobshop/solvers/neighborhood/Nowicki.java
+/home/mejri/Bureau/Metha/TP_Methaheuristique/code-template-main/src/main/java/jobshop/solvers/Tabou.java
 /home/mejri/Bureau/Metha/TP_Methaheuristique/code-template-main/src/main/java/jobshop/encodings/Task.java

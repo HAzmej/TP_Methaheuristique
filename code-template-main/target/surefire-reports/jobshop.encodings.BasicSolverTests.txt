@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: jobshop.encodings.BasicSolverTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.069 s <<< FAILURE! - in jobshop.encodings.BasicSolverTests
+testDescentSover(jobshop.encodings.BasicSolverTests)  Time elapsed: 0.029 s  <<< ERROR!
+java.lang.NullPointerException: Cannot read field "task" because "task" is null
+	at jobshop.encodings.BasicSolverTests.testDescentSover(BasicSolverTests.java:51)
+

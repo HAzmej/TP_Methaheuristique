@@ -91,7 +91,7 @@ public class Nowicki extends Neighborhood {
          */
         public ResourceOrder generateFrom(ResourceOrder original) {
             ResourceOrder contrefacon = original;
-            List<ResourceOrder> listeswapee =generateNeighbors(contrefacon);
+            contrefacon.swapTasks(machine, t1, t2);
             return contrefacon;
         }
 
@@ -165,6 +165,7 @@ public class Nowicki extends Neighborhood {
     List<Swap> neighbors(Block block) {
         ArrayList<Swap> listSwap = new ArrayList<Swap>();
         for(int i = block.firstTask ; i < block.lastTask ; i++){
+            //entre les taches consecutives
             Swap swap = new Swap(block.machine, i, i+1);
             listSwap.add(swap);
         }
