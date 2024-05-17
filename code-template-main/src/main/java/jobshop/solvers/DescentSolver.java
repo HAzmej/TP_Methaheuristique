@@ -7,6 +7,7 @@ import jobshop.Instance;
 import jobshop.encodings.ResourceOrder;
 import jobshop.encodings.Schedule;
 import jobshop.solvers.neighborhood.Neighborhood;
+import jobshop.solvers.neighborhood.Nowicki;
 
 /** An empty shell to implement a descent solver. */
 public class DescentSolver implements Solver {
@@ -27,22 +28,27 @@ public class DescentSolver implements Solver {
     @Override
     public Optional<Schedule> solve(Instance instance, long deadline) {
 
-        ResourceOrder R0 = new ResourceOrder(instance);
+        Optional<Schedule> sched = this.baseSolver.solve(instance,deadline);
+        if (!sched.isPresent()) {
+            return Optional.empty();
+        }
+        ResourceOrder R0 = new ResourceOrder(sched.get());
         List<ResourceOrder> list_RO ;
+        Nowicki now = new Nowicki();
 
-        int makespan_init = R0.toSchedule().get().makespan();
 
         long exec_time=0;
         boolean recherche =true;
         ResourceOrder bestR0=R0;
+        int makespan_init = bestR0.toSchedule().get().makespan();
         ResourceOrder prevR0;
         while((exec_time<deadline)&&(recherche)){
             //meilleur ordre trouve pour le moment
             prevR0=bestR0;
             //à chaque fois on genere les voisins du meilleur ordre obtenu
-            list_RO = neighborhood.generateNeighbors(bestR0);
+            list_RO = now.generateNeighbors(bestR0);
             for(ResourceOrder R :list_RO){
-                if (R.toSchedule().get().isValid() && R.toSchedule().isPresent()){
+                if ((R.toSchedule().get().isValid()) && (R.toSchedule().isPresent())){
                     int makespan = R.toSchedule().get().makespan();
                     if (makespan < makespan_init){
                         makespan_init = makespan;

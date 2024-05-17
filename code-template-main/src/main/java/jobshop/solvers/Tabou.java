@@ -1,81 +1,83 @@
 package jobshop.solvers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import jobshop.Instance;
 import jobshop.encodings.ResourceOrder;
 import jobshop.encodings.Schedule;
 import jobshop.solvers.neighborhood.Neighborhood;
 import jobshop.solvers.neighborhood.Nowicki;
 
-/** An empty shell to implement a descent solver. */
+import java.util.*;
+
+/** An implementation of a Taboo solver. */
 public class Tabou implements Solver {
 
     final Neighborhood neighborhood;
     final Solver baseSolver;
-    final int maxiter;
-    final int dureetabou;
+    final int maxIterations;
+    final int tabooDuration;
 
-    /** Creates a new descent solver with a given neighborhood and a solver for the initial solution.
-     *
-     * @param neighborhood Neighborhood object that should be used to generates neighbor solutions to the current candidate.
-     * @param baseSolver A solver to provide the initial solution.
-     */
-    public Tabou(Neighborhood neighborhood, Solver baseSolver, int maxiter,int dureetabou) {
+    public Tabou(Neighborhood neighborhood, Solver baseSolver, int maxIterations, int tabooDuration) {
         this.neighborhood = neighborhood;
         this.baseSolver = baseSolver;
-        this.maxiter=maxiter;
-        this.dureetabou=dureetabou;
+        this.maxIterations = maxIterations;
+        this.tabooDuration = tabooDuration;
     }
 
     @Override
     public Optional<Schedule> solve(Instance instance, long deadline) {
+        Optional<Schedule> sched = this.baseSolver.solve(instance, deadline);
+        if (!sched.isPresent()) {
+            return Optional.empty();
+        }
 
-        Optional <Schedule> sched = this.baseSolver.solve(instance, deadline);
+        ResourceOrder bestR0 = new ResourceOrder(sched.get());
+        ResourceOrder R0 = bestR0;
         Nowicki now = new Nowicki();
 
-        ResourceOrder R0 = new ResourceOrder(sched.get());
+        List<ResourceOrder> tabooOrders = new ArrayList<>();
+        List<Integer> tabooIterations = new ArrayList<>();
 
-        List <ResourceOrder> list_R0;
-        int makespan_init = R0.toSchedule().get().makespan();
+        int bestMakespan = bestR0.toSchedule().get().makespan();
 
-        long exec_time=0;
-        boolean recherche =true;
-        ResourceOrder bestR0=R0;
-        
+        for (int iteration = 0; iteration < maxIterations && System.currentTimeMillis() < deadline; iteration++) {
+            List<ResourceOrder> neighbors = now.generateNeighbors(R0);
+            ResourceOrder bestNeighbor = null;
+            int bestNeighborMakespan = Integer.MAX_VALUE;
 
-        for (int i = 0; i < maxiter && System.currentTimeMillis() < deadline; i++) {
-            list_R0 = now.generateNeighbors(bestR0);
-            ResourceOrder prevR0=null;
-        while((exec_time<deadline)&&(recherche)){
-            //meilleur ordre trouve pour le moment
-            prevR0=bestR0;
-            List <Nowicki.Swap> listswapR0 = now.allSwaps(bestR0);
-            ArrayList<Nowicki.Swap> nontabouswaps = new ArrayList<Nowicki.Swap>();
-            Nowicki.Swap best_swap=null;
-            //à chaque fois on genere les voisins du meilleur ordre obtenu
-            //list_RO = neighborhood.generateNeighbors(bestR0);
-            /*for(Nowicki.Swap NS :listswapR0){
-                boolean taboo=false;
-                if (R.toSchedule().get().isValid() && R.toSchedule().isPresent()){
-                    int makespan = R.toSchedule().get().makespan();
-                    if (makespan < makespan_init){
-                        makespan_init = makespan;
-                        bestR0 = R;
+            for (ResourceOrder neighbor : neighbors) {
+                if (!neighbor.toSchedule().isPresent()) {
+                    continue;
+                }
+                int neighborMakespan = neighbor.toSchedule().get().makespan();
+
+                boolean isTaboo = false;
+                for (int i = 0; i < tabooOrders.size(); i++) {
+                    if (tabooOrders.get(i).equals(neighbor) && (iteration - tabooIterations.get(i) <= tabooDuration)) {
+                        isTaboo = true;
+                        break;
                     }
                 }
-            }*/
-            if (prevR0==bestR0){
-                recherche=false;
+
+                if (!isTaboo && (bestNeighbor == null || neighborMakespan < bestNeighborMakespan)) {
+                    bestNeighbor = neighbor;
+                    bestNeighborMakespan = neighborMakespan;
+                }
             }
-            exec_time=System.currentTimeMillis();
+
+            if (bestNeighbor != null) {
+                R0 = bestNeighbor;
+                int currentMakespan = bestNeighborMakespan;
+
+                if (currentMakespan < bestMakespan) {
+                    bestR0 = R0;
+                    bestMakespan = currentMakespan;
+                }
+
+                tabooOrders.add(R0);
+                tabooIterations.add(iteration);
+            }
         }
-    
 
         return bestR0.toSchedule();
     }
-
-}
 }

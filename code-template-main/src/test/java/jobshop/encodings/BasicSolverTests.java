@@ -31,30 +31,4 @@ public class BasicSolverTests {
         assert schedule.makespan() == 12 : "The basic solver should have produced a makespan of 12 for this instance.";
     }
 
-    @Test
-    public void testDescentSover() throws IOException{
-        Instance instance = Instance.fromFile(Paths.get("instances/ft06"));
-        Solver DescentSolver = Solver.getSolver("spt");
-        /*Solver DescentSolver1 = Solver.getSolver("lpt");
-        Solver DescentSolver2 = Solver.getSolver("lrpt");
-        Solver DescentSolver3 = Solver.getSolver("est_spt");
-        Solver DescentSolver4 = Solver.getSolver("est_lpt");*/
-        /* 
-
-        
-
-        assert result.isPresent() : "The solver did not find a solution";
-
-        
-
-        assert  schedule.isValid() : "The solution is not valid";*/
-        Optional<Schedule> result = DescentSolver.solve(instance, System.currentTimeMillis() + 10);
-        Schedule schedule = result.get();
-
-        System.out.println("Makespan: " + schedule.makespan());
-        System.out.println("Schedule: \n" + schedule);
-        System.out.println(schedule.asciiGantt());
-
-    }
-
 }

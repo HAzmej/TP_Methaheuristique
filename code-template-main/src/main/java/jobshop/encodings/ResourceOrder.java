@@ -12,7 +12,7 @@ public final class ResourceOrder extends Encoding {
 
     // for each machine m, taskByMachine[m] is an array of tasks to be
     // executed on this machine in the same order
-    final Task[][] tasksByMachine;
+    public final Task[][] tasksByMachine;
 
     // for each machine, indicate how many tasks have been initialized
     final int[] nextFreeSlot;
@@ -61,6 +61,7 @@ public final class ResourceOrder extends Encoding {
             this.tasksByMachine[i] = original.tasksByMachine[i].clone();
         }
     }
+
 
     /** Adds the given task to the queue of the given machine. */
     public void addTaskToMachine(int machine, Task task) {

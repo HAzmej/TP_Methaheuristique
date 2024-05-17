@@ -27,12 +27,20 @@ public interface Solver {
             case "lrpt": return new GreedySolver(GreedySolver.Priority.LRPT);
             case "est_spt": return new GreedySolver(GreedySolver.Priority.EST_SPT);
             case "est_lpt": return new GreedySolver(GreedySolver.Priority.EST_LPT);
+            case "est_lrpt": return new GreedySolver(GreedySolver.Priority.EST_LRPT);
             case "descente_spt" : return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.SPT));
             case "descente_lpt" : return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.LPT));
             case "descente_lrpt" : return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.LRPT));
             case "descente_est_spt" : return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.EST_SPT));
             case "descente_est_lpt" : return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.EST_LPT));
-            
+            case "descente_est_lrpt" : return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.EST_LRPT));
+            case "tabou_spt" : return new Tabou(new Nowicki(), new GreedySolver(GreedySolver.Priority.SPT),20,20);
+            case "tabou_lpt" : return new Tabou(new Nowicki(), new GreedySolver(GreedySolver.Priority.LPT),20,20);
+            case "tabou_lrpt" : return new Tabou(new Nowicki(), new GreedySolver(GreedySolver.Priority.LRPT),20,20);
+            case "tabou_est_spt" : return new Tabou(new Nowicki(), new GreedySolver(GreedySolver.Priority.EST_SPT),200,35);
+            case "tabou_est_lpt" : return new Tabou(new Nowicki(), new GreedySolver(GreedySolver.Priority.EST_LPT),20,20);
+            case "tabou_est_lrpt" : return new Tabou(new Nowicki(), new GreedySolver(GreedySolver.Priority.EST_LRPT),20,20);
+
             // TODO: add new solvers
             default: throw new RuntimeException("Unknown solver: "+ name);
         }
